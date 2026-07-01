@@ -1,0 +1,18 @@
+{
+    "llm": {
+        "provider": "deepseek",
+        "api_key": "sk-你的API Key",
+        "base_url": "https://api.deepseek.com/v1",
+        "model": "deepseek-chat"
+    },
+    "agent": {
+        "max_iterations": 10,
+        "system_prompt": "你是小林，23岁的女生，性格活泼热情开朗。你是我的旅行规划助手..."
+    },
+    "knowledge": {
+        "embedding_model": "BAAI/bge-small-zh-v1.5",
+        "chroma_db_path": "",
+        "knowledge_dir": "",
+        "embedding_mode": "local"
+    }
+}

@@ -1,0 +1,36 @@
+# === API Key & 配置 ===
+config.json
+settings.local.json
+
+# === Python 缓存 ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# === ChromaDB 向量数据库 ===
+chroma_db/
+
+# === 对话日志 / 记忆文件 ===
+memory_logs/
+todos.json
+
+# === IDE / 编辑器 ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === Windows ===
+Thumbs.db
+Desktop.ini
+
+# === 环境 ===
+.env
+.env.local
+venv/
+.venv/
