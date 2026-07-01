@@ -18,8 +18,9 @@
 - 🔄 **对话压缩** — 长对话自动摘要，保留最近 20 条
 - 🗂️ **历史会话** — 查看/继续历史对话，最多保留 20 条
 - ⚙️ **在线配置** — Web 界面切换模型、API Key、系统提示词
+- 📤 **行程导出** — 保存行程、生成 HTML 分享页或 PDF 文件
 
-### 旅行工具（5 个内置）
+### 旅行工具（8 个内置）
 
 | 工具 | 说明 |
 |------|------|
@@ -28,6 +29,9 @@
 | `get_city_attractions` | 景点列表及门票价格 |
 | `currency_converter` | 10 种货币互换算 |
 | `suggest_trip` | 按兴趣+预算推荐目的地 |
+| `save_trip` | 保存行程规划到本地 |
+| `list_my_trips` | 查看所有已保存的行程 |
+| `export_trip` | 导出为 HTML 分享页或 PDF |
 
 ### 通用工具（10+ 个）
 
@@ -63,14 +67,17 @@ python app.py
 agent.py          # 核心引擎（ReAct 循环 + Function Calling）
 tools.py          # 15+ 个工具（@tool 装饰器自动注册）
 travel_data.py    # 23 个城市的旅行数据库
+trip_export.py    # 行程存储 + HTML/PDF 导出
 memory.py         # 短期/长期记忆 + 会话管理
 knowledge.py      # RAG 知识库（ChromaDB + BGE）
 app.py            # Gradio Web 界面
 config.py         # 配置管理（支持 5 个 Provider）
-config.json       # 用户配置
+config.json       # 用户配置（已 gitignore）
 knowledge/        # 知识库文档（.md / .txt）
-memory_logs/      # 对话历史存储
-chroma_db/        # 向量数据库
+memory_logs/      # 对话历史存储（已 gitignore）
+chroma_db/        # 向量数据库（已 gitignore）
+saved_trips/      # 已保存的行程（已 gitignore）
+exports/          # 导出文件（已 gitignore）
 todos.json        # 待办事项
 ```
 
@@ -138,6 +145,7 @@ def my_tool(param1: str, param2: int = 0) -> str:
 - **23 个城市**的旅行数据（北京/上海/成都/西安/杭州/昆明/三亚/重庆/大理/广州/厦门/南京/武汉/长沙/青岛/桂林/丽江/哈尔滨/苏州/洛阳/贵阳/张家界/拉萨）
 - 每个城市包含：景点、美食、最佳季节、日均花费、实用提示
 - 城市数据位于 `travel_data.py`，可直接编辑扩展
+- 已规划的行程可保存为本地 JSON，并导出为 HTML 分享页或 PDF
 
 ---
 
@@ -148,6 +156,7 @@ def my_tool(param1: str, param2: int = 0) -> str:
 - **向量库**: ChromaDB + BAAI/bge-small-zh-v1.5
 - **界面**: Gradio
 - **搜索**: DuckDuckGo Lite（国内可用）
+- **PDF 导出**: fpdf2 + 本地中文字体
 - **Python**: 3.10+
 
 ---
