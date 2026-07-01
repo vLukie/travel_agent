@@ -29,6 +29,10 @@ todos.json
 Thumbs.db
 Desktop.ini
 
+# === 本地数据 ===
+saved_trips/
+exports/
+
 # === 环境 ===
 .env
 .env.local

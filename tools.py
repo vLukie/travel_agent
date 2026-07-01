@@ -524,6 +524,94 @@ def suggest_trip(interests: str = "", budget: int = 0, days: int = 3) -> str:
 
 
 # ======================================================================
+# 行程导出工具
+# ======================================================================
+
+from trip_export import save_trip as _save_trip, list_trips as _list_trips, get_trip_summary as _trip_summary
+
+
+@tool
+def save_trip(destination: str, days: int = 3, style: str = "舒适",
+              budget: float = 0, itinerary: str = "", notes: str = "") -> str:
+    """保存当前规划的行程到本地，便于后续导出为 PDF 或分享链接
+    当你为用户规划好完整的行程后，主动调用此工具将行程保存下来。
+    包括目的地、天数、预算、详细的每日安排等。
+
+    :param destination: 目的地城市名称
+    :param days: 旅行天数
+    :param style: 消费档次，可选：经济/舒适/豪华
+    :param budget: 总预算（元），0 表示未设定
+    :param itinerary: 详细的行程安排，包含每日计划，建议用 Day1/Day2 分天描述
+    :param notes: 备注信息，如最佳季节、必吃美食、重要提示等
+    """
+    tid = _save_trip(destination=destination, days=days, style=style,
+                     budget=budget, itinerary=itinerary, notes=notes)
+    trip = get_trip_from_export(tid)
+    summary = _trip_summary(trip) if trip else ""
+    return f"✅ 行程已保存！\n{summary}\n\n可在「📤 行程导出」中查看、导出 PDF 或生成分享链接。"
+
+
+def get_trip_from_export(trip_id: str):
+    """从 trip_export 模块获取行程（辅助函数）"""
+    from trip_export import get_trip
+    return get_trip(trip_id)
+
+
+@tool(name="list_my_trips")
+def list_my_trips_func() -> str:
+    """列出所有已保存的行程，方便回顾之前规划过的旅行计划"""
+    trips = _list_trips()
+    if not trips:
+        return "📭 暂无已保存的行程。在规划完行程后可以用 save_trip 保存，或者去「📤 行程导出」手动添加。"
+
+    lines = ["📋 已保存的行程："]
+    for t in trips:
+        summary = _trip_summary(t)
+        tid = t.get("id", "")[:16]
+        lines.append(f"  · [{tid}] {summary}")
+    lines.append("\n💡 使用 export_trip 查看详情，或到「📤 行程导出」导出 PDF / 分享链接")
+    return "\n".join(lines)
+
+
+@tool
+def export_trip(trip_id: str = "", format: str = "html") -> str:
+    """将已保存的行程导出为 HTML 分享页或 PDF 文件
+    需要先通过 save_trip 保存行程，或用 list_my_trips 查看已保存的行程 ID
+
+    :param trip_id: 行程 ID（部分匹配也可），为空则导出最近一条
+    :param format: 导出格式，html（分享页）或 pdf
+    """
+    from trip_export import get_trip, list_trips, export_to_html, export_to_pdf
+
+    trips = list_trips()
+    if not trips:
+        return "❌ 没有已保存的行程，请先规划行程并用 save_trip 保存"
+
+    target = None
+    if trip_id:
+        # 尝试精确匹配或前缀匹配
+        for t in trips:
+            tid = t.get("id", "")
+            if tid == trip_id or tid.startswith(trip_id):
+                target = t
+                break
+        if not target:
+            return f"❌ 未找到 ID 以 '{trip_id}' 开头的行程，用 list_my_trips 查看所有行程"
+    else:
+        target = trips[0]
+
+    tid = target["id"]
+    if format == "pdf":
+        path = export_to_pdf(tid)
+    else:
+        path = export_to_html(tid)
+
+    if path:
+        return f"✅ 已导出：{path}\n💡 可在浏览器中打开查看或分享"
+    return "❌ 导出失败"
+
+
+# ======================================================================
 # 工具查找
 # ======================================================================
 
